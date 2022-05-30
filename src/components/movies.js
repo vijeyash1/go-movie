@@ -1,25 +1,33 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 
 export default class Movies extends Component {
   state = {
     movies: [],
-    isLoading: true,
+    isLoaded: false,
   };
+
   componentDidMount() {
     fetch("http://localhost:4000/v1/movies")
       .then((response) => response.json())
       .then((json) => {
-        this.setState({ movies: json.movies, isLoading: false });
+        this.setState({
+          movies: json.movies,
+          isLoaded: true,
+        });
       });
   }
-  render() {
-    const { movies, isLoading } = this.setState;
 
-    if (!isLoading) {
+  render() {
+    const { movies, isLoaded } = this.state;
+
+    if (!isLoaded) {
+      return <p>Loading...</p>;
+    } else {
       return (
-        <>
-          <h1>Choose a movie</h1>
+        <Fragment>
+          <h2>Choose a movie</h2>
+
           <ul>
             {movies.map((m) => (
               <li key={m.id}>
@@ -27,10 +35,8 @@ export default class Movies extends Component {
               </li>
             ))}
           </ul>
-        </>
+        </Fragment>
       );
-    } else {
-      return <h1>loading...</h1>;
     }
   }
 }
